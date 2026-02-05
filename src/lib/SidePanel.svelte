@@ -18,9 +18,6 @@
 			return;
 		}
 
-		// Only react to Tab
-		// if (e.key !== 'Tab') return;
-
 		// Left panel: Tab
 		// if (side === 'left' && !e.shiftKey) {
 		if (side === 'left' && e.key === '[') {
