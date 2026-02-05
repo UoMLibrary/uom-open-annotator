@@ -26,7 +26,15 @@
 		<button on:click={() => dispatch('about')}>About</button>
 	</div>
 
-	<div class="title">Image Annotation Project</div>
+	<div class="title">
+		<a
+			href="https://github.com/UoMLibrary/uom-open-annotator/"
+			target="_blank"
+			rel="noopener noreferrer"
+		>
+			Image Annotation Tool
+		</a>
+	</div>
 </header>
 
 <style>
@@ -53,11 +61,19 @@
 
 	/* ---------- Title ---------- */
 
-	.title {
-		font-size: 0.9rem;
+	.title a {
+		color: #111827; /* same as your header text */
+		text-decoration: none;
 		font-weight: 600;
-		color: #111827;
-		letter-spacing: 0.01em;
+	}
+
+	.title a:hover {
+		text-decoration: underline;
+	}
+
+	.title a:focus-visible {
+		outline: 2px solid #4c9ffe;
+		outline-offset: 2px;
 	}
 
 	/* ---------- Action group ---------- */

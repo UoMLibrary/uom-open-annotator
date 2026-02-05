@@ -7,6 +7,7 @@
 	import AnnotationsList from '$lib/viewer/AnnotationsList.svelte';
 	import Header from '$lib/Header.svelte';
 	import { createImagePairSession } from '$lib/viewer/imagePairSession';
+	import Modal from '$lib/components/Modal.svelte';
 
 	export let project = null;
 	let showHelp = false;
@@ -292,7 +293,7 @@
 					<ViewerShell imageA={$activePair.imageA} imageB={$activePair.imageB} {session} />
 				{/key}
 			{:else}
-				<div class="empty">Select an image pair</div>
+				<!-- <div class="empty">Select an image pair</div> -->
 			{/if}
 		</div>
 
@@ -304,20 +305,39 @@
 		</SidePanel>
 	</div>
 
-	{#if showHelp}
-		<div class="modal-backdrop" on:click={() => (showHelp = false)}>
-			<div class="modal" on:click|stopPropagation>
-				<h2>How to use this tool</h2>
-				<ul>
-					<li>Select an image pair from the left</li>
-					<li>Pan / zoom images in sync</li>
-					<li>Add annotations via the viewer</li>
-					<li>Annotations are saved per image pair</li>
-				</ul>
-				<button on:click={() => (showHelp = false)}>Close</button>
-			</div>
-		</div>
-	{/if}
+	<Modal open={showHelp} title="How to use this tool" on:close={() => (showHelp = false)}>
+		<ul>
+			<li>Select an image pair from the left</li>
+			<li>Pan / zoom images in sync</li>
+			<li>Add annotations via the viewer</li>
+			<li>Annotations are saved per image pair</li>
+		</ul>
+	</Modal>
+
+	<Modal open={showAbout} title="About this tool" on:close={() => (showAbout = false)}>
+		<p>
+			This tool is designed for comparing pairs of images using overlays and adding structured
+			annotations to support visual analysis.
+		</p>
+
+		<p>
+			It runs entirely in the browser and can load projects directly from a local folder, with
+			annotations saved back to the project file where the browser allows.
+		</p>
+
+		<hr />
+
+		<ul>
+			<li><strong>Purpose:</strong> Image comparison and annotation</li>
+			<li><strong>Built with:</strong> Svelte</li>
+			<li><strong>Data:</strong> Local project folder + <code>project.json</code></li>
+			<li><strong>Storage:</strong> Browser File System Access API (with fallback)</li>
+		</ul>
+
+		<p style="font-size: 0.75rem; color: #555;">
+			This is an experimental tool intended for research, exploration, and prototyping workflows.
+		</p>
+	</Modal>
 </div>
 
 <style>
