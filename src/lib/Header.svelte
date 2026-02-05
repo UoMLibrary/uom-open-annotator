@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -8,6 +8,22 @@
 	<div class="actions">
 		<button on:click={() => dispatch('load')}>Load</button>
 		<button on:click={() => dispatch('save')}>Save</button>
+	</div>
+
+	<div class="title">Image Annotation Project</div>
+</header> -->
+
+<script>
+	import { createEventDispatcher } from 'svelte';
+	const dispatch = createEventDispatcher();
+</script>
+
+<header class="header">
+	<div class="actions">
+		<button on:click={() => dispatch('load-project')}>Load</button>
+		<button on:click={() => dispatch('save-project')}>Save</button>
+		<button on:click={() => dispatch('help')}>Help</button>
+		<button on:click={() => dispatch('about')}>About</button>
 	</div>
 
 	<div class="title">Image Annotation Project</div>

@@ -1,16 +1,16 @@
 <script>
-	import ProjectLoader from '$lib/project/ProjectLoader.svelte';
 	import ProjectView from '$lib/project/ProjectView.svelte';
 
 	let project = null;
 </script>
 
 <main>
-	{#if !project}
-		<ProjectLoader on:projectLoaded={(e) => (project = e.detail)} />
-	{:else}
-		<ProjectView {project} />
-	{/if}
+	<!-- {#if !project} -->
+	<!-- <ProjectLoader on:projectLoaded={(e) => (project = e.detail)} /> -->
+	<!-- {:else} -->
+	<ProjectView {project} />
+	<!-- {/if} -->
+	<!-- <ProjectView /> -->
 </main>
 
 <style>
