@@ -1,5 +1,7 @@
 # Image Pair Annotation Viewer – Component Architecture
 
+**Note: This documentation needs updating**
+
 This document describes the structure and responsibilities of the Svelte components that make up the image pair annotation viewer. It is intended both as documentation of the current design and as a starting point for future development.
 
 The **entry point** for the system is `ProjectView`.
@@ -248,3 +250,16 @@ All state changes flow through the session API. Components never mutate shared s
 - Multiple annotation layers or types
 - Collaboration via shared session syncing
 - Annotation schemas and validation
+
+---
+
+## TODOs
+
+- Moving an annotation and then saving project does not update the file
+- Additional points made to a polygon are not being saved
+- Deleted annotations from the annotationslist are not reflected in the annotation view panel
+- Add dirty-state tracking to SaveProjectButton (indicate when there are changes to be made)
+- Add autosave (FS API only)
+- Key toggle for Title field audio annotation if annotation item selected
+- Key toggle for Decription field audio annotation if annotation item selected
+- Add trackpad support for centre mouse wheel
