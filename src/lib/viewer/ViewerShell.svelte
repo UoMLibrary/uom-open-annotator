@@ -157,6 +157,7 @@
 <div
 	class="viewer-root"
 	class:draw-mode={currentMode === 'rectangle' || currentMode === 'polygon'}
+	class:fade-mode={isShiftDown}
 	bind:this={rootEl}
 >
 	<!-- Viewer -->
@@ -196,18 +197,27 @@
 		width: 100%;
 		height: 100%;
 		outline: none; /* prevent focus ring */
-	}
 
-	.viewer-root {
+		/* Default interaction */
 		cursor: grab;
 	}
 
+	/* Active pan feedback */
+	.viewer-root:active {
+		cursor: grabbing;
+	}
+
+	/* Drawing tools override */
 	.viewer-root.draw-mode {
 		cursor: crosshair;
 	}
 
-	/* Optional polish */
 	.viewer-root.draw-mode:active {
 		cursor: crosshair;
+	}
+
+	/* Fade / opacity adjustment (Shift + wheel) */
+	.viewer-root.fade-mode {
+		cursor: ns-resize;
 	}
 </style>
