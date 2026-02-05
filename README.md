@@ -263,3 +263,4 @@ All state changes flow through the session API. Components never mutate shared s
 - Key toggle for Title field audio annotation if annotation item selected
 - Key toggle for Decription field audio annotation if annotation item selected
 - Add trackpad support for centre mouse wheel
+- Make selected Annotation more obvious in the Viewer
