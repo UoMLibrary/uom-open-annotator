@@ -70,7 +70,8 @@
 	disabled={!supported}
 	title={supported ? 'Dictate note' : 'Speech recognition not supported'}
 >
-	{listening ? '⏹ Dictating…' : '🎤'}
+	<!-- {listening ? '⏹ Dictating…' : '🎤'} -->
+	{listening ? '⏹' : '🎤'}
 </button>
 
 <style>

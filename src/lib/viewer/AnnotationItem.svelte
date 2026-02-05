@@ -16,6 +16,7 @@
 
 	let title = annotation.title ?? '';
 	let body = annotation.body?.[0]?.value ?? '';
+	let interimTitleText = '';
 	let interimText = '';
 	let locked = annotation.locked ?? false;
 
@@ -43,6 +44,16 @@
 	/* -----------------------------
 	   Speech to text
 	----------------------------- */
+
+	function handleSpeechTitleFinal(e) {
+		title = (title + ' ' + e.detail).trim();
+		interimTitleText = '';
+		commit();
+	}
+
+	function handleSpeechTitleInterim(e) {
+		interimTitleText = e.detail;
+	}
 
 	function handleSpeechFinal(e) {
 		body = (body + ' ' + e.detail).trim();
@@ -92,6 +103,7 @@
 			on:blur={commit}
 			on:keydown={(e) => e.key === 'Enter' && e.target.blur()}
 		/>
+		<SpeechToText on:final={handleSpeechTitleFinal} on:interim={handleSpeechTitleInterim} />
 
 		<Bin title="Delete annotation" on:click={() => dispatch('delete', annotation.id)} />
 	</header>
