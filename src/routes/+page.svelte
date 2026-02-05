@@ -5,12 +5,7 @@
 </script>
 
 <main>
-	<!-- {#if !project} -->
-	<!-- <ProjectLoader on:projectLoaded={(e) => (project = e.detail)} /> -->
-	<!-- {:else} -->
 	<ProjectView {project} />
-	<!-- {/if} -->
-	<!-- <ProjectView /> -->
 </main>
 
 <style>
