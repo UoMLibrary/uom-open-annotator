@@ -31,6 +31,21 @@
 	$: if (annoLayer && selectedId && $selectedId) {
 		annoLayer.select($selectedId);
 	}
+
+	// Lifecycle: global event listeners for keyboard + wheel
+
+	onMount(() => {
+		window.addEventListener('keydown', onKeyDown);
+		window.addEventListener('keyup', onKeyUp);
+		window.addEventListener('wheel', onWheel, { passive: false });
+	});
+
+	onDestroy(() => {
+		window.removeEventListener('keydown', onKeyDown);
+		window.removeEventListener('keyup', onKeyUp);
+		window.removeEventListener('wheel', onWheel);
+	});
+
 	/* ---------------- Tool control ---------------- */
 
 	function setMode(mode) {
@@ -120,51 +135,23 @@
 		setOverlayOpacity(overlayOpacity + delta);
 	}
 
-	onMount(() => {
-		window.addEventListener('keydown', onKeyDown);
-		window.addEventListener('keyup', onKeyUp);
-		window.addEventListener('wheel', onWheel, { passive: false });
-	});
-
-	onDestroy(() => {
-		window.removeEventListener('keydown', onKeyDown);
-		window.removeEventListener('keyup', onKeyUp);
-		window.removeEventListener('wheel', onWheel);
-	});
-
 	// Annotation events
 	function onCreate(e) {
 		setMode('pan');
 		session.addAnnotation(e.detail);
-		// annotations = [...annotations, e.detail];
 	}
 
 	function onUpdate(e) {
-		//annotations = annotations.map((a) => (a.id === e.detail.id ? e.detail : a));
 		session.updateAnnotation(e.detail);
 	}
 
 	function onDelete(e) {
-		// annotations = annotations.filter((a) => a.id !== e.detail.id);
-		// if (selectedAnnotationId === e.detail.id) {
-		// 	selectedAnnotationId = null;
-		// }
 		session.removeAnnotation(e.detail.id);
 	}
 
 	function onSelect(e) {
 		session.selectAnnotation(e.detail);
-		// selectedAnnotationId = e.detail; // already an ID or null
 	}
-
-	// function selectFromList(id) {
-	// 	selectedAnnotationId = id;
-	// 	annoLayer.select(id);
-	// }
-
-	// function deleteFromList(id) {
-	// 	annoLayer.deleteById(id);
-	// }
 </script>
 
 <div
