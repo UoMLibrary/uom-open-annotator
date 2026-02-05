@@ -1,27 +1,14 @@
-<!-- <script>
-	import { createEventDispatcher } from 'svelte';
-
-	const dispatch = createEventDispatcher();
-</script>
-
-<header class="header">
-	<div class="actions">
-		<button on:click={() => dispatch('load')}>Load</button>
-		<button on:click={() => dispatch('save')}>Save</button>
-	</div>
-
-	<div class="title">Image Annotation Project</div>
-</header> -->
-
 <script>
+	import LoadProjectButton from '$lib/project/LoadProjectButton.svelte';
+	import SaveProjectButton from '$lib/project/SaveProjectButton.svelte';
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 </script>
 
 <header class="header">
 	<div class="actions">
-		<button on:click={() => dispatch('load-project')}>Load</button>
-		<button on:click={() => dispatch('save-project')}>Save</button>
+		<LoadProjectButton on:load={(e) => dispatch('load-project', e.detail)} />
+		<SaveProjectButton on:save={() => dispatch('save-project')} />
 		<button on:click={() => dispatch('help')}>Help</button>
 		<button on:click={() => dispatch('about')}>About</button>
 	</div>
@@ -81,15 +68,12 @@
 	.actions {
 		display: flex;
 		align-items: stretch;
-
-		background: rgba(0, 0, 0, 0.04);
-		border-radius: 8px;
 		overflow: hidden;
 	}
 
 	/* ---------- Action buttons (toolbar-style) ---------- */
 
-	.actions button {
+	.actions :global(button) {
 		all: unset;
 
 		display: flex;
@@ -107,20 +91,7 @@
 		cursor: pointer;
 	}
 
-	/* Subtle segment separator */
-	.actions button + button {
-		border-left: 1px solid rgba(0, 0, 0, 0.08);
-	}
-
-	.actions button:hover {
-		background: rgba(0, 0, 0, 0.06);
-	}
-
-	.actions button:active {
-		background: rgba(0, 0, 0, 0.12);
-	}
-
-	.actions button:focus-visible {
+	.actions :global(button:focus-visible) {
 		outline: 2px solid #4c9ffe;
 		outline-offset: -2px;
 	}

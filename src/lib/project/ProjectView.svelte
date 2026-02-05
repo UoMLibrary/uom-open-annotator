@@ -1,37 +1,27 @@
 <script>
-	import { writable, derived, get } from 'svelte/store';
+	import { loadProjectFromFiles, saveProjectToDownload } from '$lib/project/projectIO';
+	import {
+		projectStore,
+		selectedPairId,
+		activePair,
+		cleanupProject,
+		serialiseProject
+	} from '$lib/project/projectStore';
+	import { get } from 'svelte/store';
 
-	import ViewerShell from '$lib/viewer/ViewerShell.svelte';
+	import Header from '$lib/Header.svelte';
 	import SidePanel from '$lib/SidePanel.svelte';
 	import ImagePairList from '$lib/images/ImagePairList.svelte';
 	import AnnotationsList from '$lib/viewer/AnnotationsList.svelte';
-	import Header from '$lib/Header.svelte';
-	import { createImagePairSession } from '$lib/viewer/imagePairSession';
+	import ViewerShell from '$lib/viewer/ViewerShell.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 
-	export let project = null;
+	import { createImagePairSession } from '$lib/viewer/imagePairSession';
+
 	let showHelp = false;
 	let showAbout = false;
 
-	const EMPTY_PROJECT = {
-		id: null,
-		name: null,
-		imagePairs: []
-	};
-
 	let projectDirHandle = null; // FileSystemDirectoryHandle (if supported)
-
-	/* -----------------------------
-	   Project-level state
-	----------------------------- */
-
-	const projectStore = writable(EMPTY_PROJECT);
-	const selectedPairId = writable(null);
-
-	const activePair = derived([projectStore, selectedPairId], ([$project, $id]) => {
-		if (!$project || !$id) return null;
-		return $project.imagePairs.find((p) => p.id === $id) ?? null;
-	});
 
 	/* -----------------------------
 	   UI state
@@ -144,124 +134,33 @@
 		input.click();
 	}
 
-	async function handleLoadProject() {
-		// Clean up previous project (important)
-		if ($projectStore) {
-			cleanupProject(get(projectStore));
-		}
+	async function handleLoadProject(event) {
+		const { files, dir } = event.detail;
 
-		if (supportsFileSystemAccess()) {
-			await loadViaDirectoryPicker();
-		} else {
-			await loadViaFileInput();
-		}
+		const prev = get(projectStore);
+		if (prev?.imagePairs) cleanupProject(prev);
 
-		async function loadViaDirectoryPicker() {
-			const dir = await window.showDirectoryPicker();
-			projectDirHandle = dir;
+		projectDirHandle = dir;
 
-			const files = new Map();
-
-			for await (const entry of dir.values()) {
-				if (entry.kind === 'file') {
-					const file = await entry.getFile();
-					files.set(file.name, file);
-				}
-			}
-
-			await loadProjectFromFiles(files);
-		}
-	}
-
-	async function loadViaFileInput() {
-		return new Promise((resolve) => {
-			const input = document.createElement('input');
-			input.type = 'file';
-			input.webkitdirectory = true;
-			input.multiple = true;
-
-			input.onchange = async () => {
-				const files = new Map(Array.from(input.files).map((f) => [f.name, f]));
-				projectDirHandle = null; // no write-back
-				await loadProjectFromFiles(files);
-				resolve();
-			};
-
-			input.click();
-		});
-	}
-
-	async function loadProjectFromFiles(fileMap) {
-		const projectFile = fileMap.get('project.json');
-		if (!projectFile) {
-			alert('No project.json found');
-			return;
-		}
-
-		const text = await projectFile.text();
-		const data = JSON.parse(text);
-
-		data.imagePairs = data.imagePairs.map((pair) => ({
-			...pair,
-			imageA: URL.createObjectURL(fileMap.get(pair.imageA)),
-			imageB: URL.createObjectURL(fileMap.get(pair.imageB))
-		}));
-
+		const data = await loadProjectFromFiles(files);
 		projectStore.set(data);
 		selectedPairId.set(null);
 	}
 
-	// SAVE
-
 	async function handleSaveProject() {
-		const data = get(projectStore);
+		const project = get(projectStore);
+		const clean = serialiseProject(project);
 
 		if (projectDirHandle) {
-			await saveViaFileSystemAccess(data);
-		} else {
-			saveViaDownload(data);
-		}
-	}
-
-	async function saveViaFileSystemAccess(data) {
-		let fileHandle;
-
-		try {
-			fileHandle = await projectDirHandle.getFileHandle('project.json');
-		} catch {
-			// Optional: prompt user
-			fileHandle = await projectDirHandle.getFileHandle('project.json', {
+			const fileHandle = await projectDirHandle.getFileHandle('project.json', {
 				create: true
 			});
+			const writable = await fileHandle.createWritable();
+			await writable.write(JSON.stringify(clean, null, 2));
+			await writable.close();
+		} else {
+			await saveProjectToDownload(clean);
 		}
-
-		const writable = await fileHandle.createWritable();
-		await writable.write(JSON.stringify(data, null, 2));
-		await writable.close();
-	}
-
-	function saveViaDownload(data) {
-		const blob = new Blob([JSON.stringify(data, null, 2)], {
-			type: 'application/json'
-		});
-
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = 'project.json';
-		a.click();
-		URL.revokeObjectURL(url);
-	}
-
-	function cleanupProject(project) {
-		project.imagePairs.forEach((p) => {
-			URL.revokeObjectURL(p.imageA);
-			URL.revokeObjectURL(p.imageB);
-		});
-	}
-
-	function supportsFileSystemAccess() {
-		return 'showDirectoryPicker' in window;
 	}
 </script>
 
@@ -290,7 +189,7 @@
 		<div class="viewer">
 			{#if $activePair}
 				{#key $activePair.id}
-					<ViewerShell imageA={$activePair.imageA} imageB={$activePair.imageB} {session} />
+					<ViewerShell imageA={$activePair.imageAUrl} imageB={$activePair.imageBUrl} {session} />
 				{/key}
 			{:else}
 				<!-- <div class="empty">Select an image pair</div> -->
