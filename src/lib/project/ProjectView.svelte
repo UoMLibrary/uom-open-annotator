@@ -9,6 +9,8 @@
 	} from '$lib/project/projectStore';
 	import { get } from 'svelte/store';
 
+	import Toast from '$lib/ui/Toast.svelte';
+	import { showToast } from '$lib/ui/toast';
 	import Header from '$lib/Header.svelte';
 	import SidePanel from '$lib/SidePanel.svelte';
 	import ImagePairList from '$lib/images/ImagePairList.svelte';
@@ -106,33 +108,9 @@
 		annotationsOpen = $annotations.length > 0;
 	}
 
-	// Data handling
-	function handleSave() {
-		const data = get(projectStore);
-		console.log(data);
-
-		const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = 'project.json';
-		a.click();
-		URL.revokeObjectURL(url);
-	}
-
-	function handleLoad() {
-		const input = document.createElement('input');
-		input.type = 'file';
-		input.accept = 'application/json';
-		input.onchange = async () => {
-			const file = input.files[0];
-			if (!file) return;
-			const text = await file.text();
-			const data = JSON.parse(text);
-			console.log(data);
-		};
-		input.click();
-	}
+	/* -----------------------------
+	Data handling
+	----------------------------- */
 
 	async function handleLoadProject(event) {
 		const { files, dir } = event.detail;
@@ -151,21 +129,28 @@
 		const project = get(projectStore);
 		const clean = serialiseProject(project);
 
-		if (projectDirHandle) {
-			const fileHandle = await projectDirHandle.getFileHandle('project.json', {
-				create: true
-			});
-			const writable = await fileHandle.createWritable();
-			await writable.write(JSON.stringify(clean, null, 2));
-			await writable.close();
-		} else {
-			await saveProjectToDownload(clean);
+		try {
+			if (projectDirHandle) {
+				const fileHandle = await projectDirHandle.getFileHandle('project.json', {
+					create: true
+				});
+				const writable = await fileHandle.createWritable();
+				await writable.write(JSON.stringify(clean, null, 2));
+				await writable.close();
+			} else {
+				await saveProjectToDownload(clean);
+			}
+
+			showToast('Project saved', 'success');
+		} catch (err) {
+			console.error(err);
+			showToast('Failed to save project', 'error', 4000);
 		}
 	}
 </script>
 
 <div class="app">
-	<!-- <Header on:load={handleLoad} on:save={handleSave} /> -->
+	<Toast />
 	<Header
 		on:load-project={handleLoadProject}
 		on:save-project={handleSaveProject}
