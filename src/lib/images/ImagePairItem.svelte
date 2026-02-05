@@ -9,8 +9,8 @@
 
 <div class="pair-item" class:selected on:click={() => dispatch('select')}>
 	<div class="thumbs">
-		<img src={pair.imageA} alt="Image A" />
-		<img src={pair.imageB} alt="Image B" />
+		<img src={pair.thumbAUrl} alt="Image A" />
+		<img src={pair.thumbAUrl} alt="Image B" />
 
 		{#if pair.annotations.length > 0}
 			<div class="count-badge">

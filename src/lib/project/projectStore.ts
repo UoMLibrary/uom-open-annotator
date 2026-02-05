@@ -34,11 +34,14 @@ export function serialiseProject(project) {
  */
 export function cleanupProject(project) {
     project.imagePairs.forEach((p) => {
-        if (p.imageAUrl?.startsWith('blob:')) {
-            URL.revokeObjectURL(p.imageAUrl);
-        }
-        if (p.imageBUrl?.startsWith('blob:')) {
-            URL.revokeObjectURL(p.imageBUrl);
-        }
+        revoke(p.imageAUrl);
+        revoke(p.imageBUrl);
+        revoke(p.thumbAUrl);
     });
+}
+
+function revoke(url) {
+    if (typeof url === 'string' && url.startsWith('blob:')) {
+        URL.revokeObjectURL(url);
+    }
 }
