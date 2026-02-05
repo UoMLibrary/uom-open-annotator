@@ -30,7 +30,7 @@
 	----------------------------- */
 
 	let annotationsOpen = false;
-	let imagesOpen = true;
+	let imagesOpen = false;
 
 	/* -----------------------------
 	   Session state
@@ -113,6 +113,8 @@
 	----------------------------- */
 
 	async function handleLoadProject(event) {
+		imagesOpen = true;
+
 		const { files, dir } = event.detail;
 
 		const prev = get(projectStore);
