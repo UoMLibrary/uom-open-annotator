@@ -262,8 +262,13 @@
 		</p>
 
 		<p class="muted">
-			This is an experimental application intended for research, exploration, and prototyping
-			workflows.
+			This is an experimental application and a work in progress, intended for research,
+			exploration, and prototyping workflows.
+		</p>
+		<p class="muted">
+			For any enquiries or suggestions for further development, please contact Christopher Wilson —
+			Software Developer, Artificial Intelligence and Ideas Adoption (AIIA), The University of
+			Manchester.
 		</p>
 	</Modal>
 </div>
