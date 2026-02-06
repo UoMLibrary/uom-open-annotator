@@ -266,9 +266,8 @@
 			exploration, and prototyping workflows.
 		</p>
 		<p class="muted">
-			For any enquiries or suggestions for further development, please contact Christopher Wilson —
-			Software Developer, Artificial Intelligence and Ideas Adoption (AIIA), The University of
-			Manchester.
+			For any enquiries or suggestions for further development, please contact Christopher Wilson,
+			Artificial Intelligence and Ideas Adoption (AIIA), The University of Manchester.
 		</p>
 	</Modal>
 </div>
